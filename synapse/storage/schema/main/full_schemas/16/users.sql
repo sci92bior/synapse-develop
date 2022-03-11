@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users(
     password_hash TEXT,
     creation_ts BIGINT,
     admin SMALLINT DEFAULT 0 NOT NULL,
+    vip SMALLINT DEFAULT 0 NOT NULL,
     UNIQUE(name)
 );
 

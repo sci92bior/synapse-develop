@@ -175,6 +175,7 @@ class RegistrationWorkerStore(CacheInvalidationWorkerStore):
                 "password_hash",
                 "is_guest",
                 "admin",
+                "vip",
                 "consent_version",
                 "consent_server_notice_sent",
                 "appservice_id",
@@ -476,6 +477,24 @@ class RegistrationWorkerStore(CacheInvalidationWorkerStore):
             )
 
         await self.db_pool.runInteraction("set_server_admin", set_server_admin_txn)
+
+    async def set_vip(self, user: UserID, vip: bool) -> None:
+        """Sets whether a user is an admin of this homeserver.
+
+        Args:
+            user: user ID of the user to test
+            vip: true iff the user is to be a server admin, false otherwise.
+        """
+
+        def set_vip_txn(txn):
+            self.db_pool.simple_update_one_txn(
+                txn, "users", {"name": user.to_string()}, {"vip": 1 if vip else 0}
+            )
+            self._invalidate_cache_and_stream(
+                txn, self.get_user_by_id, (user.to_string(),)
+            )
+
+        await self.db_pool.runInteraction("set_vip", set_vip_txn)
 
     async def set_shadow_banned(self, user: UserID, shadow_banned: bool) -> None:
         """Sets whether a user shadow-banned.
@@ -2045,6 +2064,7 @@ class RegistrationStore(StatsStore, RegistrationBackgroundUpdateStore):
         appservice_id: Optional[str] = None,
         create_profile_with_displayname: Optional[str] = None,
         admin: bool = False,
+        vip: bool = False,
         user_type: Optional[str] = None,
         shadow_banned: bool = False,
     ) -> None:
@@ -2079,6 +2099,7 @@ class RegistrationStore(StatsStore, RegistrationBackgroundUpdateStore):
             appservice_id,
             create_profile_with_displayname,
             admin,
+            vip,
             user_type,
             shadow_banned,
         )
@@ -2093,6 +2114,7 @@ class RegistrationStore(StatsStore, RegistrationBackgroundUpdateStore):
         appservice_id: Optional[str],
         create_profile_with_displayname: Optional[str],
         admin: bool,
+        vip: bool,
         user_type: Optional[str],
         shadow_banned: bool,
     ):
@@ -2123,6 +2145,7 @@ class RegistrationStore(StatsStore, RegistrationBackgroundUpdateStore):
                         "is_guest": 1 if make_guest else 0,
                         "appservice_id": appservice_id,
                         "admin": 1 if admin else 0,
+                        "vip": 1 if vip else 0,
                         "user_type": user_type,
                         "shadow_banned": shadow_banned,
                     },
@@ -2138,6 +2161,7 @@ class RegistrationStore(StatsStore, RegistrationBackgroundUpdateStore):
                         "is_guest": 1 if make_guest else 0,
                         "appservice_id": appservice_id,
                         "admin": 1 if admin else 0,
+                        "vip": 1 if vip else 0,
                         "user_type": user_type,
                         "shadow_banned": shadow_banned,
                     },

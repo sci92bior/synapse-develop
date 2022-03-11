@@ -64,6 +64,7 @@ class AdminHandler:
         user_info_to_return = {
             "name",
             "admin",
+            "vip",
             "deactivated",
             "shadow_banned",
             "creation_ts",

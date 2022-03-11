@@ -221,6 +221,14 @@ class UserRestServletV2(RestServlet):
                 Codes.BAD_JSON,
             )
 
+        set_vip_to = body.get("vip", False)
+        if not isinstance(set_vip_to, bool):
+            raise SynapseError(
+                HTTPStatus.BAD_REQUEST,
+                "Param 'vip' must be a boolean, if given",
+                Codes.BAD_JSON,
+            )
+
         password = body.get("password", None)
         if password is not None:
             if not isinstance(password, str) or len(password) > 512:
@@ -304,6 +312,10 @@ class UserRestServletV2(RestServlet):
 
                     await self.store.set_server_admin(target_user, set_admin_to)
 
+            if "vip" in body:
+                if set_vip_to != user["vip"]:
+                    await self.store.set_vip(target_user, set_vip_to)
+
             if password is not None:
                 logout_devices = True
                 new_password_hash = await self.auth_handler.hash(password)
@@ -353,6 +365,7 @@ class UserRestServletV2(RestServlet):
                 localpart=target_user.localpart,
                 password_hash=password_hash,
                 admin=set_admin_to,
+                vip=set_vip_to,
                 default_display_name=displayname,
                 user_type=user_type,
                 by_admin=True,
@@ -498,6 +511,7 @@ class UserRegisterServlet(RestServlet):
             password_hash = await self.auth_handler.hash(password)
 
         admin = body.get("admin", None)
+        vip = body.get("vip", None)
         user_type = body.get("user_type", None)
         displayname = body.get("displayname", None)
 
@@ -522,6 +536,8 @@ class UserRegisterServlet(RestServlet):
         want_mac_builder.update(password_bytes)
         want_mac_builder.update(b"\x00")
         want_mac_builder.update(b"admin" if admin else b"notadmin")
+        want_mac_builder.update(b"\x00")
+        want_mac_builder.update(b"vip" if vip else b"notvip")
         if user_type:
             want_mac_builder.update(b"\x00")
             want_mac_builder.update(user_type.encode("utf8"))
@@ -540,6 +556,7 @@ class UserRegisterServlet(RestServlet):
             localpart=body["username"].lower(),
             password_hash=password_hash,
             admin=bool(admin),
+            vip=bool(vip),
             user_type=user_type,
             default_display_name=displayname,
             by_admin=True,
