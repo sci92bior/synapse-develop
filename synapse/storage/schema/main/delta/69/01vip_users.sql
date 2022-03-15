@@ -13,7 +13,5 @@
  * limitations under the License.
  */
 
-ALTER TABLE users
-  -- if this event is a state event, its state key
-  ADD COLUMN vip smallint DEFAULT 0 NOT NULL,;
+ALTER TABLE users ADD COLUMN vip smallint DEFAULT 0 NOT NULL;
 
