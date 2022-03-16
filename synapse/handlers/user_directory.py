@@ -97,6 +97,7 @@ class UserDirectoryHandler(StateDeltasHandler):
                 }
         """
         results = await self.store.search_user_dir(user_id, search_term, limit)
+        logger.warning(results)
 
         # Remove any spammy users from the results.
         non_spammy_users = []
@@ -109,7 +110,7 @@ class UserDirectoryHandler(StateDeltasHandler):
         is_vip = await self.auth.is_vip(UserID.from_string(user_id))
         logger.warning("Poszukujący uzytkownik to:" + str(is_vip))
         if is_vip == False:
-            logger.warning(results["results"])
+            logger.warning(results)
             for user in results["results"]:
                 current_user = await self.auth.is_vip(UserID.from_string(user["user_id"]))
                 logger.warning("Przeszukiwany użytkownik jest: " + str(current_user))
