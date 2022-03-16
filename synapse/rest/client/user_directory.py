@@ -75,7 +75,7 @@ class UserDirectorySearchRestServlet(RestServlet):
             user_id, search_term, limit
         )
 
-        logger.warning(results["results"][0])
+        logger.warning(results["results"])
 
         return 200, results
 
