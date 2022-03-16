@@ -106,6 +106,8 @@ class UserDirectoryHandler(StateDeltasHandler):
         results["results"] = non_spammy_users
 
         filtered_users = []
+        is_vip = await self.auth.is_vip(UserID.from_string(user_id))
+        print(is_vip)
         if not await self.auth.is_vip(UserID.from_string(user_id)):
             for user in results["results"]:
                 if not await self.auth.is_vip(UserID.from_string(user["user_id"])):
