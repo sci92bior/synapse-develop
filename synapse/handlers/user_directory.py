@@ -108,7 +108,7 @@ class UserDirectoryHandler(StateDeltasHandler):
         filtered_users = []
         is_vip = await self.auth.is_vip(UserID.from_string(user_id))
         logger.warning("Poszukujący uzytkownik to:" + str(is_vip))
-        if not await self.auth.is_vip(UserID.from_string(user_id)):
+        if not is_vip:
             for user in results["results"]:
                 current_user = await self.auth.is_vip(UserID.from_string(user["user_id"]))
                 logger.warning("Przeszukiwany użytkownik jest: " + str(current_user))
