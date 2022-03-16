@@ -55,6 +55,7 @@ class UserDirectorySearchRestServlet(RestServlet):
                     ]
                 }
         """
+        logger.warning(request)
         requester = await self.auth.get_user_by_req(request, allow_guest=False)
         user_id = requester.user.to_string()
 
