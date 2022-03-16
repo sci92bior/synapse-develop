@@ -494,7 +494,7 @@ class RegistrationWorkerStore(CacheInvalidationWorkerStore):
             allow_none=True,
             desc="is_vip",
         )
-
+        print(user.to_string() + " "+res)
         return bool(res) if res else False
 
     async def set_vip(self, user: UserID, vip: bool) -> None:
