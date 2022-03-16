@@ -106,18 +106,18 @@ class UserDirectoryHandler(StateDeltasHandler):
                 non_spammy_users.append(user)
         results["results"] = non_spammy_users
 
-        filtered_users = []
-        is_vip = await self.auth.is_vip(UserID.from_string(user_id))
-        logger.warning("Poszukujący uzytkownik to:" + str(is_vip))
-        if is_vip == False:
-            logger.warning(results)
-            for user in results["results"]:
-                current_user = await self.auth.is_vip(UserID.from_string(user["user_id"]))
-                logger.warning("Przeszukiwany użytkownik jest: " + str(current_user))
-                if not await self.auth.is_vip(UserID.from_string(user["user_id"])):
-                    logger.warning("Dodano: "+ user["user_id"])
-                    filtered_users.append(user)
-            results["results"] = filtered_users
+        # filtered_users = []
+        # is_vip = await self.auth.is_vip(UserID.from_string(user_id))
+        # logger.warning("Poszukujący uzytkownik to:" + str(is_vip))
+        # if is_vip == False:
+        #     logger.warning(results)
+        #     for user in results["results"]:
+        #         current_user = await self.auth.is_vip(UserID.from_string(user["user_id"]))
+        #         logger.warning("Przeszukiwany użytkownik jest: " + str(current_user))
+        #         if not await self.auth.is_vip(UserID.from_string(user["user_id"])):
+        #             logger.warning("Dodano: "+ user["user_id"])
+        #             filtered_users.append(user)
+        #     results["results"] = filtered_users
 
         return results
 
