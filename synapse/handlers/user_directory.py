@@ -20,7 +20,7 @@ from synapse.api.constants import EventTypes, HistoryVisibility, JoinRules, Memb
 from synapse.handlers.state_deltas import MatchChange, StateDeltasHandler
 from synapse.metrics.background_process_metrics import run_as_background_process
 from synapse.storage.roommember import ProfileInfo
-from synapse.types import JsonDict
+from synapse.types import JsonDict, UserID
 from synapse.util.metrics import Measure
 
 if TYPE_CHECKING:
@@ -63,6 +63,7 @@ class UserDirectoryHandler(StateDeltasHandler):
         self.update_user_directory = hs.config.server.update_user_directory
         self.search_all_users = hs.config.userdirectory.user_directory_search_all_users
         self.spam_checker = hs.get_spam_checker()
+        self.auth = hs.get_auth()
         # The current position in the current_state_delta stream
         self.pos: Optional[int] = None
 
@@ -103,6 +104,13 @@ class UserDirectoryHandler(StateDeltasHandler):
             if not await self.spam_checker.check_username_for_spam(user):
                 non_spammy_users.append(user)
         results["results"] = non_spammy_users
+
+        filtered_users = []
+        if not await self.auth.is_vip(UserID.from_string(user_id)):
+            for user in results["results"]:
+                if not await self.auth.is_vip(UserID.from_string(user["user_id"])):
+                    filtered_users.append(user)
+            results["results"] = filtered_users
 
         return results
 

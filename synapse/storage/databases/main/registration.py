@@ -478,6 +478,25 @@ class RegistrationWorkerStore(CacheInvalidationWorkerStore):
 
         await self.db_pool.runInteraction("set_server_admin", set_server_admin_txn)
 
+    async def is_vip(self, user: UserID) -> bool:
+        """Determines if a user is a vip.
+
+        Args:
+            user: user ID of the user to test
+
+        Returns:
+            true iff the user is a vip, false otherwise.
+        """
+        res = await self.db_pool.simple_select_one_onecol(
+            table="users",
+            keyvalues={"name": user.to_string()},
+            retcol="vip",
+            allow_none=True,
+            desc="is_vip",
+        )
+
+        return bool(res) if res else False
+
     async def set_vip(self, user: UserID, vip: bool) -> None:
         """Sets whether a user is an admin of this homeserver.
 

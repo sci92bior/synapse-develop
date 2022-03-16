@@ -580,6 +580,17 @@ class Auth:
         """
         return await self.store.is_server_admin(user)
 
+    async def is_vip(self, user: UserID) -> bool:
+        """Check if the given user is a vip.
+
+        Args:
+            user: user to check
+
+        Returns:
+            True if the user is an vip
+        """
+        return await self.store.is_vip(user)
+
     async def check_can_change_room_list(self, room_id: str, user: UserID) -> bool:
         """Determine whether the user is allowed to edit the room's entry in the
         published room list.
