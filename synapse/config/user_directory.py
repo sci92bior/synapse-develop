@@ -26,10 +26,10 @@ class UserDirectoryConfig(Config):
         user_directory_config = config.get("user_directory") or {}
         self.user_directory_search_enabled = user_directory_config.get("enabled", True)
         self.user_directory_search_all_users = user_directory_config.get(
-            "search_all_users", False
+            "search_all_users", True
         )
         self.user_directory_search_prefer_local_users = user_directory_config.get(
-            "prefer_local_users", False
+            "prefer_local_users", True
         )
 
     def generate_config_section(self, config_dir_path, server_name, **kwargs):

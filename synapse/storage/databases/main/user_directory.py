@@ -916,8 +916,6 @@ class UserDirectoryStore(UserDirectoryBackgroundUpdateStore):
 
         limited = len(results) > limit
 
-        logger.warning(results)
-
         return {"limited": limited, "results": results}
 
 
