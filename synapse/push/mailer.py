@@ -559,10 +559,10 @@ class Mailer:
         formatted_body = event.content.get("formatted_body")
         body = event.content.get("body")
 
-        if msgformat == "org.matrix.custom.html" and formatted_body:
-            messagevars["body_text_html"] = safe_markup(formatted_body)
-        elif body:
-            messagevars["body_text_html"] = safe_text(body)
+        # if msgformat == "org.matrix.custom.html" and formatted_body:
+        #     messagevars["body_text_html"] = safe_markup(formatted_body)
+        # elif body:
+        #     messagevars["body_text_html"] = safe_text(body)
 
     def _add_image_message_vars(
         self, messagevars: MessageVars, event: EventBase
@@ -867,43 +867,43 @@ class Mailer:
         )
 
 
-def safe_markup(raw_html: str) -> jinja2.Markup:
-    """
-    Sanitise a raw HTML string to a set of allowed tags and attributes, and linkify any bare URLs.
-
-    Args
-        raw_html: Unsafe HTML.
-
-    Returns:
-        A Markup object ready to safely use in a Jinja template.
-    """
-    return jinja2.Markup(
-        bleach.linkify(
-            bleach.clean(
-                raw_html,
-                tags=ALLOWED_TAGS,
-                attributes=ALLOWED_ATTRS,
-                # bleach master has this, but it isn't released yet
-                # protocols=ALLOWED_SCHEMES,
-                strip=True,
-            )
-        )
-    )
-
-
-def safe_text(raw_text: str) -> jinja2.Markup:
-    """
-    Sanitise text (escape any HTML tags), and then linkify any bare URLs.
-
-    Args
-        raw_text: Unsafe text which might include HTML markup.
-
-    Returns:
-        A Markup object ready to safely use in a Jinja template.
-    """
-    return jinja2.Markup(
-        bleach.linkify(bleach.clean(raw_text, tags=[], attributes=[], strip=False))
-    )
+# def safe_markup(raw_html: str) -> jinja2.Markup:
+#     """
+#     Sanitise a raw HTML string to a set of allowed tags and attributes, and linkify any bare URLs.
+#
+#     Args
+#         raw_html: Unsafe HTML.
+#
+#     Returns:
+#         A Markup object ready to safely use in a Jinja template.
+#     """
+#     return jinja2.Markup(
+#         bleach.linkify(
+#             bleach.clean(
+#                 raw_html,
+#                 tags=ALLOWED_TAGS,
+#                 attributes=ALLOWED_ATTRS,
+#                 # bleach master has this, but it isn't released yet
+#                 # protocols=ALLOWED_SCHEMES,
+#                 strip=True,
+#             )
+#         )
+#     )
+#
+#
+# def safe_text(raw_text: str) -> jinja2.Markup:
+#     """
+#     Sanitise text (escape any HTML tags), and then linkify any bare URLs.
+#
+#     Args
+#         raw_text: Unsafe text which might include HTML markup.
+#
+#     Returns:
+#         A Markup object ready to safely use in a Jinja template.
+#     """
+#     return jinja2.Markup(
+#         bleach.linkify(bleach.clean(raw_text, tags=[], attributes=[], strip=False))
+#     )
 
 
 def deduped_ordered_list(it: Iterable[T]) -> List[T]:

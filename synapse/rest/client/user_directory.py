@@ -74,9 +74,6 @@ class UserDirectorySearchRestServlet(RestServlet):
         results = await self.user_directory_handler.search_users(
             user_id, search_term, limit
         )
-
-        logger.warning(results["results"])
-
         return 200, results
 
 
